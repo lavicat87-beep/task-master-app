@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Master</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 400px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        h1 { text-align: center; margin-bottom: 20px; }
+        form { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+        }
+        input[type="submit"] {
+            background: #ff8c00;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .delete-btn {
+            color: #ff4b2b;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Task Master</h1>
+
+        <form action="/" method="POST">
+            <input type="text" name="content" id="content" placeholder="Enter a new task..." required>
+            <input type="submit" value="Add">
+        </form>
+
+        <table>
+            {% for task in tasks %}
+            <tr>
+                <td>{{ task.content }}</td>
+                <td style="text-align: right;">
+                    <a href="/delete/{{task.id}}" class="delete-btn">&times;</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        {% if tasks|length < 1 %}
+        <p style="text-align: center; opacity: 0.6;">No tasks yet. Add one above!</p>
+        {% endif %}
+    </div>
+</body>
+</html>
