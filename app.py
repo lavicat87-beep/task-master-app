@@ -58,7 +58,9 @@ def delete(id):
     except:
         return 'There was a problem deleting that task'
 
-    
-    if __name__ == "__main__":
+
+if __name__ == "__main__":
+    # Line 62: This MUST be indented (4 spaces)
     port = int(os.environ.get("PORT", 5000))
+    # Line 63: This MUST also be indented (4 spaces)
     app.run(host='0.0.0.0', port=port)
