@@ -17,6 +17,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # 2. UPDATED: We tell SQLAlchemy to use that 'Base' class
 db = SQLAlchemy(app, model_class=Base)
 
+with app.app_context():
+    db.create_all()
+
 # 3. UPDATED: The Task Model using 'Mapped'
 class Todo(db.Model):
     # Old way: id = db.Column(db.Integer, primary_key=True)
