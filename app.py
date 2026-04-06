@@ -25,6 +25,7 @@ with app.app_context():
     print(f"✅ Database tables verified/created at: {db_path}")
 
 class Todo(db.Model):
+    __tablename__ = 'todo'  # 👈 Add this line to be 100% sure
     id: Mapped[int] = mapped_column(primary_key=True)
     content: Mapped[str] = mapped_column(nullable=False)
     date_created: Mapped[datetime] = mapped_column(default=datetime.utcnow)
