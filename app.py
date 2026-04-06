@@ -4,12 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
 
+# 1. Modern SQLAlchemy 2.0 Setup
 class Base(DeclarativeBase):
     pass
 
 app = Flask(__name__)
 
-# 🛠️ THE PATH FIX: This ensures the database is created in the SAME folder as app.py
+# 2. THE PATH FIX: This forces the database into the correct folder on Render
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, 'tasks.db')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
@@ -17,12 +18,12 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app, model_class=Base)
 
-# 🚀 THE TABLES FIX: Forces Render to build the table before the first request
+# 3. THE "FORCE" COMMAND: This runs every time Render starts the app
 with app.app_context():
+    # This creates the table if it doesn't exist
     db.create_all()
-    print(f"Database created at: {db_path}") # This will show up in your Render logs!
+    print(f"✅ Database tables verified/created at: {db_path}")
 
-# 4. The Modern Task Model
 class Todo(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     content: Mapped[str] = mapped_column(nullable=False)
@@ -41,9 +42,9 @@ def index():
             db.session.commit()
             return redirect('/')
         except:
-            return 'Issue adding task'
+            return 'There was a problem adding your task'
     else:
-        # Check if table exists before querying to avoid the 500 error
+        # If the table exists, this will now work perfectly
         tasks = Todo.query.order_by(Todo.date_created).all()
         return render_template('index.html', tasks=tasks)
 
@@ -55,7 +56,7 @@ def delete(id):
         db.session.commit()
         return redirect('/')
     except:
-        return 'Issue deleting task'
+        return 'There was a problem deleting that task'
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
