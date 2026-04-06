@@ -4,21 +4,24 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
 import os
 
+# 1. SQLAlchemy 2.0 Base Class
 class Base(DeclarativeBase):
     pass
 
 app = Flask(__name__)
 
+# 2. Database Configuration
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'tasks.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app, model_class=Base)
 
-# This block forces Render to create the table immediately
+# 🚀 3. THE FIX: Force Render to create the table on startup
 with app.app_context():
     db.create_all()
 
+# 4. The Modern Task Model
 class Todo(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     content: Mapped[str] = mapped_column(nullable=False)
@@ -39,6 +42,7 @@ def index():
         except:
             return 'Issue adding task'
     else:
+        # Check if table exists before querying to avoid the 500 error
         tasks = Todo.query.order_by(Todo.date_created).all()
         return render_template('index.html', tasks=tasks)
 
