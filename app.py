@@ -1,25 +1,26 @@
+import os
 from flask import Flask, render_template, url_for, request, redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from datetime import datetime
-import os
 
-# 1. SQLAlchemy 2.0 Base Class
 class Base(DeclarativeBase):
     pass
 
 app = Flask(__name__)
 
-# 2. Database Configuration
+# 🛠️ THE PATH FIX: This ensures the database is created in the SAME folder as app.py
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'tasks.db')
+db_path = os.path.join(basedir, 'tasks.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app, model_class=Base)
 
-# 🚀 3. THE FIX: Force Render to create the table on startup
+# 🚀 THE TABLES FIX: Forces Render to build the table before the first request
 with app.app_context():
     db.create_all()
+    print(f"Database created at: {db_path}") # This will show up in your Render logs!
 
 # 4. The Modern Task Model
 class Todo(db.Model):
